@@ -8,7 +8,7 @@ struct AuthView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text("Authentication Required")
-                .font(.title2)
+                .font(.title)
             Text(root.statusMessage)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
