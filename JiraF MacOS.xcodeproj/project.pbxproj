@@ -3,11 +3,19 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 90;
 	objects = {
+
+/* Begin PBXBuildFile section */
+		25AA91EC2E7D8DDD0022AD91 /* Hummingbird in Frameworks */ = {isa = PBXBuildFile; productRef = 25AA91EB2E7D8DDD0022AD91 /* Hummingbird */; };
+		25AA91EE2E7D8DDD0022AD91 /* HummingbirdCore in Frameworks */ = {isa = PBXBuildFile; productRef = 25AA91ED2E7D8DDD0022AD91 /* HummingbirdCore */; };
+		25AA91F22E7D8DDD0022AD91 /* HummingbirdRouter in Frameworks */ = {isa = PBXBuildFile; productRef = 25AA91F12E7D8DDD0022AD91 /* HummingbirdRouter */; };
+		25AA92052E7D94390022AD91 /* AsyncHTTPClient in Frameworks */ = {isa = PBXBuildFile; productRef = 25AA92042E7D94390022AD91 /* AsyncHTTPClient */; };
+/* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		25AA91582E7C8F9D0022AD91 /* JiraF MacOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "JiraF MacOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		25AA92012E7D8FFD0022AD91 /* Network.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Network.framework; path = System/Library/Frameworks/Network.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -21,10 +29,12 @@
 /* Begin PBXFrameworksBuildPhase section */
 		25AA91552E7C8F9D0022AD91 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
+				25AA92052E7D94390022AD91 /* AsyncHTTPClient in Frameworks */,
+				25AA91F22E7D8DDD0022AD91 /* HummingbirdRouter in Frameworks */,
+				25AA91EE2E7D8DDD0022AD91 /* HummingbirdCore in Frameworks */,
+				25AA91EC2E7D8DDD0022AD91 /* Hummingbird in Frameworks */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -33,6 +43,7 @@
 			isa = PBXGroup;
 			children = (
 				25AA915A2E7C8F9D0022AD91 /* JiraF MacOS */,
+				25AA91F92E7D8DFD0022AD91 /* Frameworks */,
 				25AA91592E7C8F9D0022AD91 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -43,6 +54,14 @@
 				25AA91582E7C8F9D0022AD91 /* JiraF MacOS.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		25AA91F92E7D8DFD0022AD91 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				25AA92012E7D8FFD0022AD91 /* Network.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -58,13 +77,15 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				25AA915A2E7C8F9D0022AD91 /* JiraF MacOS */,
 			);
 			name = "JiraF MacOS";
 			packageProductDependencies = (
+				25AA91EB2E7D8DDD0022AD91 /* Hummingbird */,
+				25AA91ED2E7D8DDD0022AD91 /* HummingbirdCore */,
+				25AA91F12E7D8DDD0022AD91 /* HummingbirdRouter */,
+				25AA92042E7D94390022AD91 /* AsyncHTTPClient */,
 			);
 			productName = "JiraF MacOS";
 			productReference = 25AA91582E7C8F9D0022AD91 /* JiraF MacOS.app */;
@@ -94,7 +115,11 @@
 			);
 			mainGroup = 25AA914F2E7C8F9D0022AD91;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+			packageReferences = (
+				25AA91EA2E7D8DDD0022AD91 /* XCRemoteSwiftPackageReference "hummingbird" */,
+				25AA92032E7D94390022AD91 /* XCRemoteSwiftPackageReference "async-http-client" */,
+			);
+			preferredProjectObjectVersion = 90;
 			productRefGroup = 25AA91592E7C8F9D0022AD91 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -107,25 +132,21 @@
 /* Begin PBXResourcesBuildPhase section */
 		25AA91562E7C8F9D0022AD91 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		25AA91542E7C8F9D0022AD91 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		25AA91622E7C8F9E0022AD91 /* Debug */ = {
+		25AA91622E7C8F9E0022AD91 /* Debug configuration for PBXProject "JiraF MacOS" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -189,7 +210,7 @@
 			};
 			name = Debug;
 		};
-		25AA91632E7C8F9E0022AD91 /* Release */ = {
+		25AA91632E7C8F9E0022AD91 /* Release configuration for PBXProject "JiraF MacOS" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -245,7 +266,7 @@
 			};
 			name = Release;
 		};
-		25AA91652E7C8F9E0022AD91 /* Debug */ = {
+		25AA91652E7C8F9E0022AD91 /* Debug configuration for PBXNativeTarget "JiraF MacOS" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -258,13 +279,16 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "JiraF 🦒";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "net.mdrubel.JiraF-MacOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.mdrubel.jiraf-mac";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -272,7 +296,7 @@
 			};
 			name = Debug;
 		};
-		25AA91662E7C8F9E0022AD91 /* Release */ = {
+		25AA91662E7C8F9E0022AD91 /* Release configuration for PBXNativeTarget "JiraF MacOS" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -285,13 +309,16 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "JiraF 🦒";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "net.mdrubel.JiraF-MacOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "net.mdrubel.jiraf-mac";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -305,22 +332,62 @@
 		25AA91532E7C8F9D0022AD91 /* Build configuration list for PBXProject "JiraF MacOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				25AA91622E7C8F9E0022AD91 /* Debug */,
-				25AA91632E7C8F9E0022AD91 /* Release */,
+				25AA91622E7C8F9E0022AD91 /* Debug configuration for PBXProject "JiraF MacOS" */,
+				25AA91632E7C8F9E0022AD91 /* Release configuration for PBXProject "JiraF MacOS" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		25AA91642E7C8F9E0022AD91 /* Build configuration list for PBXNativeTarget "JiraF MacOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				25AA91652E7C8F9E0022AD91 /* Debug */,
-				25AA91662E7C8F9E0022AD91 /* Release */,
+				25AA91652E7C8F9E0022AD91 /* Debug configuration for PBXNativeTarget "JiraF MacOS" */,
+				25AA91662E7C8F9E0022AD91 /* Release configuration for PBXNativeTarget "JiraF MacOS" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		25AA91EA2E7D8DDD0022AD91 /* XCRemoteSwiftPackageReference "hummingbird" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hummingbird-project/hummingbird";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.16.0;
+			};
+		};
+		25AA92032E7D94390022AD91 /* XCRemoteSwiftPackageReference "async-http-client" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swift-server/async-http-client.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.28.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		25AA91EB2E7D8DDD0022AD91 /* Hummingbird */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25AA91EA2E7D8DDD0022AD91 /* XCRemoteSwiftPackageReference "hummingbird" */;
+			productName = Hummingbird;
+		};
+		25AA91ED2E7D8DDD0022AD91 /* HummingbirdCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25AA91EA2E7D8DDD0022AD91 /* XCRemoteSwiftPackageReference "hummingbird" */;
+			productName = HummingbirdCore;
+		};
+		25AA91F12E7D8DDD0022AD91 /* HummingbirdRouter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25AA91EA2E7D8DDD0022AD91 /* XCRemoteSwiftPackageReference "hummingbird" */;
+			productName = HummingbirdRouter;
+		};
+		25AA92042E7D94390022AD91 /* AsyncHTTPClient */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25AA92032E7D94390022AD91 /* XCRemoteSwiftPackageReference "async-http-client" */;
+			productName = AsyncHTTPClient;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 25AA91502E7C8F9D0022AD91 /* Project object */;
 }
