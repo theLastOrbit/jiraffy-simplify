@@ -40,11 +40,13 @@ final class AuthManager {
     }
     
     func status(for session: AuthSession?) -> SessionStatus {
-        guard let session, !session.isExpired else {
+        guard let session else {
             return .invalid
         }
         if session.isValidForAtLeastTenMinutes {
             return .valid
+        } else if session.isExpired {
+            return .needsRefresh
         }
         return .needsRefresh
     }

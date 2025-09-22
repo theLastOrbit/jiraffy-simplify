@@ -16,9 +16,21 @@ final class RootViewModel: ObservableObject {
     // Token
     private var session: AuthSession?
     
+    private(set) var squads: [JiraSquad] = []
+    
     init() {
         session = AuthManager.shared.loadSession()
         Task { await evaluateToken() }
+        
+        squads = [
+            JiraSquad(name: "Alpha", value: "Squad Alpha"),
+            JiraSquad(name: "Artisans", value: "Squad Artisans"),
+            JiraSquad(name: "Lambda", value: "Squad Lambda"),
+            JiraSquad(name: "Netcore", value: "Squad Netcore"),
+            JiraSquad(name: "Omega", value: "Squad Omega"),
+            JiraSquad(name: "Optimization", value: "Squad Optimization"),
+            JiraSquad(name: "Sigma", value: "Squad Sigma")
+        ]
     }
     
     // MARK: - Token Evaluation & Flow
