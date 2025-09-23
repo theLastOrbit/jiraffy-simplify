@@ -3,24 +3,29 @@ import SwiftUI
 struct HomeView: View {
     
     @EnvironmentObject private var root: RootViewModel
+    
     @State private var parentKey: String = ""
     @State private var selectedSquad: JiraSquad? = nil
     @State private var parentKeyError: String? = nil
     
+    @State private var showAlert = false
+    
     // Validation: must match ^MYGP-\\d+$
     private func validateParentKey() {
+        root.parentTicketName = ""
+        
         let trimmed = parentKey.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty {
             parentKeyError = nil
             return
         }
         
-        let pattern = "^MYGP-\\d+$"
+        let pattern = "^\(root.projectKeyPrefix)-\\d+$"
         if trimmed.range(of: pattern, options: .regularExpression) == nil {
-            if trimmed.hasPrefix("MYGP-") {
-                parentKeyError = "Enter digits after MYGP-"
+            if trimmed.hasPrefix("\(root.projectKeyPrefix)-") {
+                parentKeyError = "Enter digits after \(root.projectKeyPrefix)-"
             } else {
-                parentKeyError = "Must start with MYGP-"
+                parentKeyError = "Must start with \(root.projectKeyPrefix)-"
             }
         } else {
             parentKeyError = nil
@@ -102,11 +107,25 @@ struct HomeView: View {
                 Spacer().frame(width: 8)
                 
                 Button("Submit") {
-                    // Handle submission with parentKey and selectedSquad
+                    Task {
+                        do {
+                            showAlert = try await root.getTicket(key: parentKey)
+                        } catch {
+                            parentKeyError = "Not found, enter a valid key"
+                        }
+                    }
                 }
                 .buttonStyle(.borderedProminent)
                 .disabled(selectedSquad == nil || parentKey.isEmpty || parentKeyError != nil)
             }
+        }
+        .alert("Create subtask under:", isPresented: $showAlert) {
+            Button("Cancel", role: .cancel) { }
+            Button("Create", role: .none) {
+                
+            }
+        } message: {
+            Text(root.parentTicketName)
         }
         .padding(.horizontal, 32)
         .padding(.top, 16)

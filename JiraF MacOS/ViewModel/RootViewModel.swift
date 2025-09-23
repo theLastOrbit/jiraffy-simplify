@@ -17,6 +17,9 @@ final class RootViewModel: ObservableObject {
     private var session: AuthSession?
     
     private(set) var squads: [JiraSquad] = []
+    private(set) var projectKeyPrefix: String = ""
+    
+    var parentTicketName: String = ""
     
     init() {
         session = AuthManager.shared.loadSession()
@@ -104,5 +107,20 @@ final class RootViewModel: ObservableObject {
         user = nil
         statusMessage = "Logged out."
         route = .auth
+    }
+    
+    func getTicket(key: String) async throws -> Bool {
+        isBusy = true
+        do {
+            let ticketName = try await JiraAPIClient.shared.fetchTicketSummary(key: key)
+            parentTicketName = ticketName
+            isBusy = false
+            return !ticketName.isEmpty
+            
+        } catch {
+            parentTicketName = ""
+            isBusy = false
+            throw error
+        }
     }
 }

@@ -138,4 +138,35 @@ final class JiraAPIClient {
         }
         return session
     }
+    
+    func fetchTicketSummary(key: String) async throws -> String {
+        guard let session = auth.loadSession() else {
+            throw APIError.missingData
+        }
+        var url = apiBase
+        url.append(path: "/ex/jira/\(session.cloudId)/rest/api/3/issue/\(key)")
+        
+        // Request only summary field to reduce payload
+        var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "fields", value: "summary")]
+        guard let finalURL = components?.url else {
+            throw APIError.invalidURL
+        }
+        
+        var req = URLRequest(url: finalURL)
+        req.httpMethod = "GET"
+        req.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        
+        struct IssueResponse: Decodable {
+            let key: String
+            let fields: Fields
+        }
+        struct Fields: Decodable {
+            let summary: String
+        }
+        
+        let issue = try await perform(req, decode: IssueResponse.self)
+        return issue.fields.summary
+    }
 }
