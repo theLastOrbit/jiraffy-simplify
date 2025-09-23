@@ -1,5 +1,5 @@
 
-import SwiftUI
+import Foundation
 
 @MainActor
 final class RootViewModel: ObservableObject {
@@ -12,6 +12,7 @@ final class RootViewModel: ObservableObject {
     @Published var user: JiraUser?
     @Published var statusMessage: String = ""
     @Published var isBusy: Bool = false
+    @Published var rows: [InputFieldRow] = [InputFieldRow()]
     
     // Token
     private var session: AuthSession?
@@ -122,5 +123,9 @@ final class RootViewModel: ObservableObject {
             isBusy = false
             throw error
         }
+    }
+    
+    func createSubtask() {
+        isBusy = true
     }
 }

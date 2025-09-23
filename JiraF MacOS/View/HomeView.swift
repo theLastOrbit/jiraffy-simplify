@@ -34,102 +34,113 @@ struct HomeView: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            HStack {
-                if let user = root.user {
-                    Text("Welcome, \(user.displayName) 👋")
-                        .font(.largeTitle)
-                } else {
-                    Text("Loading user…")
-                }
-                Spacer()
-                
-                Button("Reload User") {
-                    Task { await root.evaluateToken() }
-                }
-                .disabled(root.isBusy)
-                
-                Button("Logout") {
-                    root.logout()
-                }
-            }
-            
-            InputFieldView(isBusy: $root.isBusy)
-            
+            topView()
+            InputFieldView(root: root)
             Spacer()
-            
-            HStack(spacing: 4) {
-                Spacer()
-                
-                Text("Parent Key:")
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    TextField("MYGP-100", text: $parentKey)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 140)
-                        .onChange(of: parentKey) {
-                            parentKey = parentKey.uppercased()
-                            validateParentKey()
-                        }
-                        .overlay {
-                            if parentKeyError != nil {
-                                RoundedRectangle(cornerRadius: 6)
-                                    .stroke(Color.red.opacity(0.7), lineWidth: 1)
-                            }
-                        }
-                    if let error = parentKeyError {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                    }
-                }
-                
-                Spacer().frame(width: 8)
-                
-                Text("Squad:")
-                Menu {
-                    if root.squads.isEmpty {
-                        Text("No squads available")
-                    } else {
-                        ForEach(root.squads, id: \.name) { squad in
-                            Button(squad.name) { selectedSquad = squad }
-                        }
-                        if selectedSquad != nil {
-                            Divider()
-                            Button("Clear Selection") { selectedSquad = nil }
-                        }
-                    }
-                } label: {
-                    Text(selectedSquad?.name ?? "Select Squad")
-                        .frame(minWidth: 120, alignment: .leading)
-                }
-                .fixedSize()
-                
-                Spacer().frame(width: 8)
-                
-                Button("Submit") {
-                    Task {
-                        do {
-                            showAlert = try await root.getTicket(key: parentKey)
-                        } catch {
-                            parentKeyError = "Not found, enter a valid key"
-                        }
-                    }
-                }
-                .buttonStyle(.borderedProminent)
-                .disabled(selectedSquad == nil || parentKey.isEmpty || parentKeyError != nil)
-            }
+            bottomView()
         }
-        .alert("Create subtask under:", isPresented: $showAlert) {
+        .alert(root.parentTicketName, isPresented: $showAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Create", role: .none) {
-                
+                root.createSubtask()
             }
         } message: {
-            Text(root.parentTicketName)
+            Text("Create sub-tasks under \(parentKey)\nin squad \(selectedSquad?.name ?? "") ??")
         }
         .padding(.horizontal, 32)
         .padding(.top, 16)
         .padding(.bottom, 32)
+    }
+}
+
+
+extension HomeView {
+    
+    @ViewBuilder
+    func topView() -> some View {
+        HStack {
+            if let user = root.user {
+                Text("Welcome, \(user.displayName) 👋")
+                    .font(.largeTitle)
+            } else {
+                Text("Loading user…")
+            }
+            Spacer()
+            
+            Button("Reload User") {
+                Task { await root.evaluateToken() }
+            }
+            .disabled(root.isBusy)
+            
+            Button("Logout") {
+                root.logout()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    func bottomView() -> some View {
+        HStack(spacing: 4) {
+            Spacer()
+            
+            Text("Parent Key:")
+            
+            VStack(alignment: .leading, spacing: 2) {
+                TextField("MYGP-100", text: $parentKey)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 140)
+                    .onChange(of: parentKey) {
+                        parentKey = parentKey.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+                        validateParentKey()
+                    }
+                    .overlay {
+                        if parentKeyError != nil {
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.red.opacity(0.7), lineWidth: 1)
+                        }
+                    }
+                if let error = parentKeyError {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
+            }
+            
+            Spacer().frame(width: 8)
+            
+            Text("Squad:")
+            Menu {
+                if root.squads.isEmpty {
+                    Text("No squads available")
+                } else {
+                    ForEach(root.squads, id: \.name) { squad in
+                        Button(squad.name) { selectedSquad = squad }
+                    }
+                    if selectedSquad != nil {
+                        Divider()
+                        Button("Clear Selection") { selectedSquad = nil }
+                    }
+                }
+            } label: {
+                Text(selectedSquad?.name ?? "Select Squad")
+                    .frame(minWidth: 120, alignment: .leading)
+            }
+            .fixedSize()
+            
+            Spacer().frame(width: 8)
+            
+            Button("Submit") {
+                Task {
+                    do {
+                        showAlert = try await root.getTicket(key: parentKey)
+                    } catch {
+                        parentKeyError = "Not found, enter a valid key"
+                    }
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(selectedSquad == nil || parentKey.isEmpty || parentKeyError != nil)
+        }
     }
 }
 
