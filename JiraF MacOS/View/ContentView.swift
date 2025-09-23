@@ -9,7 +9,9 @@ import SwiftUI
 
 // Root application view (formerly ContentView)
 struct RootView: View {
+    
     @StateObject private var root = RootViewModel()
+    @AppStorage("darkModeEnabled") private var darkMode = false
     
     var body: some View {
         ZStack {
@@ -21,8 +23,24 @@ struct RootView: View {
                 HomeView()
                     .environmentObject(root)
             }
+            
+            VStack {
+                Spacer()
+                
+                HStack {
+                    Image(systemName: "sun.max")
+                    Toggle("", isOn: $darkMode)
+                        .toggleStyle(.switch)
+                        .labelsHidden()
+                    Image(systemName: "moon")
+                    Spacer()
+                }
+            }
+            .padding(32)
+            
             LoadingOverlay(isVisible: root.isBusy)
         }
+        .preferredColorScheme(darkMode ? .dark : .light)
     }
 }
 
