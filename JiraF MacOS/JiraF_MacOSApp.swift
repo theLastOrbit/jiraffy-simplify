@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct JiraF_MacOSApp: App {
+    
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -16,5 +19,11 @@ struct JiraF_MacOSApp: App {
         }
         .windowResizability(.contentSize)
         .windowStyle(.hiddenTitleBar)
+        // Override default menus
+        .commands {
+            CommandGroup(replacing: .appVisibility) { }
+            CommandGroup(replacing: .appInfo) { }
+            CommandGroup(replacing: .systemServices) { }
+        }
     }
 }
