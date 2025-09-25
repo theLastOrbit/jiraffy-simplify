@@ -141,6 +141,10 @@ final class RootViewModel: ObservableObject {
         hasResults = true
         
         for row in rows {
+            guard row.isValid else {
+                continue
+            }
+            
             do {
                 let result = try await api.createTicket(
                     parentKey: parentKey,

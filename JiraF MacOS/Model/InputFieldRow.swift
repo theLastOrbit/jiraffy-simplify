@@ -12,4 +12,8 @@ struct InputFieldRow: Identifiable, Hashable {
     var title: String = ""
     var devHours: String = ""
     var solutionHours: String = ""
+    
+    var isValid: Bool {
+        !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 }
