@@ -39,8 +39,9 @@ final class RootViewModel: ObservableObject {
             JiraSquad(name: "Lambda", value: "Squad Lambda"),
             JiraSquad(name: "Netcore", value: "Squad Netcore"),
             JiraSquad(name: "Omega", value: "Squad Omega"),
-            JiraSquad(name: "Optimization", value: "Squad Optimization"),
-            JiraSquad(name: "Sigma", value: "Squad Sigma")
+            JiraSquad(name: "Optimization", value: "Optimization"),
+            JiraSquad(name: "Sigma", value: "Squad Sigma"),
+            JiraSquad(name: "Squad Eight", value: "Squad Eight")
         ]
     }
     
