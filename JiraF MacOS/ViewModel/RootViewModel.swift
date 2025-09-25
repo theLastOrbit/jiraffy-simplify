@@ -1,24 +1,31 @@
-
 import Foundation
+#if canImport(AppKit)
+import AppKit
+#endif
 
 @MainActor
 final class RootViewModel: ObservableObject {
     enum Route { case auth, home }
     
     // Navigation
-    @Published var route: Route = .auth
+    @Published private(set) var route: Route = .auth
     
     // Shared state
-    @Published var user: JiraUser?
-    @Published var statusMessage: String = ""
+    @Published private(set) var user: JiraUser?
+    @Published private(set) var statusMessage: String = ""
     @Published var isBusy: Bool = false
     @Published var rows: [InputFieldRow] = [InputFieldRow()]
     
+    @Published private(set) var hasResults: Bool = false
+    @Published private(set) var tickets: [JiraTicket] = []
+    
     // Token
     private var session: AuthSession?
+    private let api = JiraAPIClient.shared
     
     private(set) var squads: [JiraSquad] = []
     private(set) var projectKeyPrefix: String = ""
+    private var browseBaseURL = ""
     
     var parentTicketName: String = ""
     
@@ -61,7 +68,7 @@ final class RootViewModel: ObservableObject {
             return
         }
         do {
-            let refreshed = try await JiraAPIClient.shared.refresh(using: current)
+            let refreshed = try await api.refresh(using: current)
             session = refreshed
             AuthManager.shared.saveSession(refreshed)
             await loadUserAndNavigate()
@@ -76,7 +83,7 @@ final class RootViewModel: ObservableObject {
         statusMessage = "Authenticating…"
         defer { isBusy = false }
         do {
-            let new = try await JiraAPIClient.shared.authenticate()
+            let new = try await api.authenticate()
             session = new
             statusMessage = "Authenticated. Loading user…"
             await loadUserAndNavigate()
@@ -92,7 +99,7 @@ final class RootViewModel: ObservableObject {
             return
         }
         do {
-            let me = try await JiraAPIClient.shared.fetchMe()
+            let me = try await api.fetchMe()
             user = me
             statusMessage = "Welcome, \(me.displayName)"
             route = .home
@@ -113,7 +120,7 @@ final class RootViewModel: ObservableObject {
     func getTicket(key: String) async throws -> Bool {
         isBusy = true
         do {
-            let ticketName = try await JiraAPIClient.shared.fetchTicketSummary(key: key)
+            let ticketName = try await api.fetchTicketSummary(key: key)
             parentTicketName = ticketName
             isBusy = false
             return !ticketName.isEmpty
@@ -125,7 +132,51 @@ final class RootViewModel: ObservableObject {
         }
     }
     
-    func createSubtask() {
+    func createSubtask(parentKey: String, squadName: String?) async {
+        guard let userId = user?.id, let squadName else {
+            return
+        }
+        
         isBusy = true
+        hasResults = true
+        
+        for row in rows {
+            do {
+                let result = try await api.createTicket(
+                    parentKey: parentKey,
+                    summary: row.title,
+                    devHours: Double(row.devHours),
+                    solutionHours: Double(row.solutionHours),
+                    accountId: userId,
+                    squadName: squadName
+                )
+                
+                let ticket = JiraTicket(key: result.key, summary: result.summary)
+                tickets.append(ticket)
+                
+            } catch {
+                print("Failed to create ticket for row \(row.title): \(error)")
+            }
+        }
+        
+        isBusy = false
+    }
+    
+    func reset() {
+        isBusy = true
+        tickets.removeAll()
+        rows.removeAll()
+        rows.append(InputFieldRow())
+        hasResults = false
+        isBusy = false
+    }
+    
+    // MARK: - Ticket Browsing
+    func openTicket(_ key: String) {
+        let full = browseBaseURL + key
+        guard let url = URL(string: full) else { return }
+#if os(macOS)
+        NSWorkspace.shared.open(url)
+#endif
     }
 }

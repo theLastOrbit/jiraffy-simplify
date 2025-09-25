@@ -1,13 +1,15 @@
 import SwiftUI
+#if canImport(AppKit)
+import AppKit
+#endif
 
 struct HomeView: View {
     
     @EnvironmentObject private var root: RootViewModel
     
     @State private var parentKey: String = ""
-    @State private var selectedSquad: JiraSquad? = nil
     @State private var parentKeyError: String? = nil
-    
+    @State private var selectedSquad: JiraSquad? = nil
     @State private var showAlert = false
     
     // Validation: must match ^MYGP-\\d+$
@@ -35,14 +37,26 @@ struct HomeView: View {
     var body: some View {
         VStack(spacing: 16) {
             topView()
-            InputFieldView(root: root)
-            Spacer()
-            bottomView()
+            
+            if root.hasResults {
+                // Ticket results list
+                resultView()
+                
+            } else {
+                InputFieldView(root: root)
+                Spacer()
+                bottomView()
+            }
         }
         .alert(root.parentTicketName, isPresented: $showAlert) {
             Button("Cancel", role: .cancel) { }
             Button("Create", role: .none) {
-                root.createSubtask()
+                Task {
+                    await root.createSubtask(
+                        parentKey: parentKey,
+                        squadName: selectedSquad?.value
+                    )
+                }
             }
         } message: {
             Text("Create sub-tasks under \(parentKey)\nin squad \(selectedSquad?.name ?? "") ??")
@@ -51,13 +65,20 @@ struct HomeView: View {
         .padding(.top, 16)
         .padding(.bottom, 32)
     }
+    
+    private func reset() {
+        parentKey = ""
+        parentKeyError = nil
+        selectedSquad = nil
+        root.reset()
+    }
 }
 
 
 extension HomeView {
     
     @ViewBuilder
-    func topView() -> some View {
+    private func topView() -> some View {
         HStack {
             if let user = root.user {
                 Text("Welcome, \(user.displayName) 👋")
@@ -79,7 +100,7 @@ extension HomeView {
     }
     
     @ViewBuilder
-    func bottomView() -> some View {
+    private func bottomView() -> some View {
         HStack(spacing: 4) {
             Spacer()
             
@@ -140,6 +161,56 @@ extension HomeView {
             }
             .buttonStyle(.borderedProminent)
             .disabled(selectedSquad == nil || parentKey.isEmpty || parentKeyError != nil)
+        }
+    }
+    
+    @ViewBuilder
+    private func resultView() -> some View {
+        VStack {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Created Sub-Tasks")
+                    .font(.title2).bold()
+                
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 8) {
+                        ForEach(root.tickets) { ticket in
+                            HStack(alignment: .top, spacing: 12) {
+                                Button(ticket.key) {
+                                    root.openTicket(ticket.key)
+                                }
+                                .buttonStyle(.link)
+                                .onHover { inside in
+                                    if inside {
+                                        NSCursor.pointingHand.push()
+                                    } else {
+                                        NSCursor.pop()
+                                    }
+                                }
+                                
+                                Text(ticket.summary)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .textSelection(.enabled)
+                            }
+                            .padding(8)
+                            .background(Color.gray.opacity(0.08))
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                        }
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding()
+            .padding(.horizontal, 8)
+            
+            Spacer()
+            
+            HStack {
+                Spacer()
+                Button(action: reset) {
+                    Label("Start Over", systemImage: "arrow.clockwise")
+                }
+                .buttonStyle(.borderedProminent)
+            }
         }
     }
 }

@@ -169,4 +169,54 @@ final class JiraAPIClient {
         let issue = try await perform(req, decode: IssueResponse.self)
         return issue.fields.summary
     }
+    
+    func createTicket(
+        parentKey: String,
+        summary: String,
+        devHours: Double?,
+        solutionHours: Double?,
+        accountId: String,
+        squadName: String
+    ) async throws -> (key: String, summary: String) {
+        guard let session = auth.loadSession() else {
+            throw APIError.missingData
+        }
+        var base = apiBase
+        base.append(path: "/ex/jira/\(session.cloudId)/rest/api/3/issue")
+        
+        let payload = JiraPayload(
+            fields: .init(
+                summary: summary,
+                issuetype: .init(id: "10372"),
+                project: .init(id: "10211"),
+                parent: .init(key: parentKey),
+                description: .init(content: [.init(content: [.init(text: summary)])]),
+                assignee: .init(accountId: accountId),
+                reporter: .init(accountId: accountId),
+                customfield_10501: .init(value: squadName),
+                customfield_10800: devHours,
+                customfield_11405: solutionHours
+            ),
+            transition: .init(id: "941")
+        )
+        
+        var req = URLRequest(url: base)
+        req.httpMethod = "POST"
+        req.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        req.setValue("application/json", forHTTPHeaderField: "Accept")
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        do {
+            req.httpBody = try JSONEncoder().encode(payload)
+        } catch {
+            throw APIError.encoding(error)
+        }
+        
+        struct CreateIssueResponse: Decodable {
+            let key: String
+        }
+        
+        let response = try await perform(req, decode: CreateIssueResponse.self)
+        return (key: response.key, summary: summary)
+    }
 }
