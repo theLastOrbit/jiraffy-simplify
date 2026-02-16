@@ -184,10 +184,19 @@ final class JiraAPIClient {
         var base = apiBase
         base.append(path: "/ex/jira/\(session.cloudId)/rest/api/3/issue")
         
+        let _issuetype: String
+        if let devHours, devHours > 0 {
+            _issuetype = "10372" // Dev subtask
+        } else if let solutionHours, solutionHours > 0 {
+            _issuetype = "10417" // Solution & Req Analysis
+        } else {
+            throw APIError.missingData
+        }
+        
         let payload = JiraPayload(
             fields: .init(
                 summary: summary,
-                issuetype: .init(id: "10372"),
+                issuetype: .init(id: _issuetype),
                 project: .init(id: "10211"),
                 parent: .init(key: parentKey),
                 description: .init(content: [.init(content: [.init(text: summary)])]),
